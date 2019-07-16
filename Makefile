@@ -1,3 +1,4 @@
+GO111MODULE=off
 
 build:	
 	go get
