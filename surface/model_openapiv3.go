@@ -375,12 +375,24 @@ func (b *OpenAPI3Builder) typeForSchema(schema *openapiv3.Schema) (kind FieldKin
 		format := schema.Format
 		switch schema.Type {
 		case "string":
+			if schema.Nullable {
+				return FieldKind_REFERENCE, "string", format
+			}
 			return FieldKind_SCALAR, "string", format
 		case "integer":
+			if schema.Nullable {
+				return FieldKind_REFERENCE, "integer", format
+			}
 			return FieldKind_SCALAR, "integer", format
 		case "number":
+			if schema.Nullable {
+				return FieldKind_REFERENCE, "number", format
+			}
 			return FieldKind_SCALAR, "number", format
 		case "boolean":
+			if schema.Nullable {
+				return FieldKind_REFERENCE, "boolean", format
+			}
 			return FieldKind_SCALAR, "boolean", format
 		case "array":
 			if schema.Items != nil {
