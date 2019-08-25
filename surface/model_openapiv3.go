@@ -154,6 +154,22 @@ func (b *OpenAPI3Builder) buildTypeFromSchemaOrReference(
 				t.ContentType = typeForRef(schema.AdditionalProperties.GetSchemaOrReference().GetReference().GetXRef())
 			}
 		}
+
+		for _, extension := range schema.SpecificationExtension {
+			if extension.Value == nil || extension.Value.Value == nil {
+				continue
+			}
+			na := &NamedAny{
+				Name:                 extension.Name,
+				Value:                &Any{
+					Value:                extension.Value.Value,
+					Yaml:                 extension.Value.Yaml,
+				},
+			}
+
+			t.SpecificationExtension = append(t.SpecificationExtension, na)
+		}
+
 		return t, err
 	} else {
 		return nil, errors.New("unable to determine service type for referenced schema " + name)
