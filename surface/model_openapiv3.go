@@ -130,6 +130,7 @@ func (b *OpenAPI3Builder) buildTypeFromSchemaOrReference(
 		t.Name = name
 		t.Description = "implements the service definition of " + name
 		t.Fields = make([]*Field, 0)
+		t.SpecificationExtension = make([]*NamedAny, 0)
 		if schema.Properties != nil {
 			if len(schema.Properties.AdditionalProperties) > 0 {
 				// If the schema has properties, generate a struct.
@@ -156,7 +157,7 @@ func (b *OpenAPI3Builder) buildTypeFromSchemaOrReference(
 		}
 
 		for _, extension := range schema.SpecificationExtension {
-			if extension.Value == nil || extension.Value.Value == nil {
+			if extension.Value == nil {
 				continue
 			}
 			na := &NamedAny{
