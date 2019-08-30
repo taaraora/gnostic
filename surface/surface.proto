@@ -68,6 +68,7 @@ message Type {
 
     string typeName = 6; // language-specific type name
     repeated NamedAny specification_extension = 7;
+    string typeSource = 100;
 }
 
 // Method is an operation of an API and typically has associated client and server code.

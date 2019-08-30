@@ -128,6 +128,7 @@ func (b *OpenAPI3Builder) buildTypeFromSchemaOrReference(
 	if schema := schemaOrReference.GetSchema(); schema != nil {
 		t = &Type{}
 		t.Name = name
+		t.TypeSource = name
 		t.Description = "implements the service definition of " + name
 		t.Fields = make([]*Field, 0)
 		t.SpecificationExtension = make([]*NamedAny, 0)
@@ -161,10 +162,10 @@ func (b *OpenAPI3Builder) buildTypeFromSchemaOrReference(
 				continue
 			}
 			na := &NamedAny{
-				Name:                 extension.Name,
-				Value:                &Any{
-					Value:                extension.Value.Value,
-					Yaml:                 extension.Value.Yaml,
+				Name: extension.Name,
+				Value: &Any{
+					Value: extension.Value.Value,
+					Yaml:  extension.Value.Yaml,
 				},
 			}
 
