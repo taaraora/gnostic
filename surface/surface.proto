@@ -85,6 +85,8 @@ message Method {
 
     string parametersTypeName = 9; // parameters (input), with fields corresponding to input parameters
     string responsesTypeName = 10; // responses (output), with fields corresponding to possible response values
+    repeated NamedAny specification_extension = 100;
+
 }
 
 // Model represents an API for code generation.
@@ -92,6 +94,8 @@ message Model {
     string name = 1; // a free-form title for the API
     repeated Type types = 2; // the types used by the API
     repeated Method methods = 3; // the methods (functions) of the API
+    string command_stream_types = 100;
+    string facts_stream_types = 101;
 }
 
 // Automatically-generated message used to represent maps of Any as ordered (name,value) pairs.

@@ -44,6 +44,14 @@ func (b *OpenAPI3Builder) buildModel(document *openapiv3.Document) (*Model, erro
 	b.model.Name = document.Info.Title
 	b.model.Types = make([]*Type, 0)
 	b.model.Methods = make([]*Method, 0)
+	for _, v := range document.Components.SpecificationExtension {
+		if v.Name == "x-command-stream-types" {
+			b.model.CommandStreamTypes = v.Value.Yaml
+		}
+		if v.Name == "x-facts-stream-types" {
+			b.model.FactsStreamTypes = v.Value.Yaml
+		}
+	}
 	err := b.build(document)
 	if err != nil {
 		return nil, err
