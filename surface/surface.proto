@@ -68,7 +68,6 @@ message Type {
 
     string typeName = 6; // language-specific type name
     repeated NamedAny specification_extension = 7;
-    string typeSource = 100;
 }
 
 // Method is an operation of an API and typically has associated client and server code.
@@ -94,8 +93,7 @@ message Model {
     string name = 1; // a free-form title for the API
     repeated Type types = 2; // the types used by the API
     repeated Method methods = 3; // the methods (functions) of the API
-    string command_stream_types = 100;
-    string facts_stream_types = 101;
+    repeated NamedAny components_specification_extension = 100;
 }
 
 // Automatically-generated message used to represent maps of Any as ordered (name,value) pairs.

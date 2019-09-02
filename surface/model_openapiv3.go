@@ -44,13 +44,15 @@ func (b *OpenAPI3Builder) buildModel(document *openapiv3.Document) (*Model, erro
 	b.model.Name = document.Info.Title
 	b.model.Types = make([]*Type, 0)
 	b.model.Methods = make([]*Method, 0)
-	for _, v := range document.Components.SpecificationExtension {
-		if v.Name == "x-command-stream-types" {
-			b.model.CommandStreamTypes = v.Value.Yaml
+	for _, extension := range document.Components.SpecificationExtension {
+		extensionNamedAny := &NamedAny{
+			Name: extension.Name,
+			Value: &Any{
+				Value: extension.Value.Value,
+				Yaml:  extension.Value.Yaml,
+			},
 		}
-		if v.Name == "x-facts-stream-types" {
-			b.model.FactsStreamTypes = v.Value.Yaml
-		}
+		b.model.ComponentsSpecificationExtension = append(b.model.ComponentsSpecificationExtension, extensionNamedAny)
 	}
 	err := b.build(document)
 	if err != nil {
@@ -136,7 +138,6 @@ func (b *OpenAPI3Builder) buildTypeFromSchemaOrReference(
 	if schema := schemaOrReference.GetSchema(); schema != nil {
 		t = &Type{}
 		t.Name = name
-		t.TypeSource = name
 		t.Description = "implements the service definition of " + name
 		t.Fields = make([]*Field, 0)
 		t.SpecificationExtension = make([]*NamedAny, 0)
