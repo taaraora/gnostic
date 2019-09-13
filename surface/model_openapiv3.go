@@ -219,6 +219,16 @@ func (b *OpenAPI3Builder) buildMethodFromPathItem(
 				Name:        sanitizeOperationName(op.OperationId),
 				Description: op.Description,
 			}
+			for _, v := range op.SpecificationExtension {
+				namAny := &NamedAny{
+					Name: v.Name,
+					Value: &Any{
+						Value: v.Value.Value,
+						Yaml:  v.Value.Yaml,
+					},
+				}
+				m.SpecificationExtension = append(m.SpecificationExtension, namAny)
+			}
 			if m.Name == "" {
 				m.Name = generateOperationName(method, path)
 			}
