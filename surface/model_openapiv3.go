@@ -51,6 +51,16 @@ func (b *OpenAPI3Builder) buildModel(document *openapiv3.Document, sourceName st
 	if err != nil {
 		log.Printf("Error while building symbolic references. This might cause the plugin to fail: %v", err)
 	}
+	for _, extension := range document.Components.SpecificationExtension {
+		extensionNamedAny := &NamedAny{
+			Name: extension.Name,
+			Value: &Any{
+				Value: extension.Value.Value,
+				Yaml:  extension.Value.Yaml,
+			},
+		}
+		b.model.ComponentsSpecificationExtension = append(b.model.ComponentsSpecificationExtension, extensionNamedAny)
+	}
 	return b.model, nil
 }
 
@@ -142,6 +152,7 @@ func (b *OpenAPI3Builder) buildSymbolicReferences(document *openapiv3.Document, 
 
 	for ref := range cache {
 		if isSymbolicReference(ref) {
+			log.Println(ref)
 			b.model.SymbolicReferences = append(b.model.SymbolicReferences, ref)
 		}
 	}
@@ -179,6 +190,16 @@ func (b *OpenAPI3Builder) buildFromNamedPath(name string, pathItem *openapiv3.Pa
 				Method:      method,
 				Name:        sanitizeOperationName(op.OperationId),
 				Description: op.Description,
+			}
+			for _, v := range op.SpecificationExtension {
+				namAny := &NamedAny{
+					Name: v.Name,
+					Value: &Any{
+						Value: v.Value.Value,
+						Yaml:  v.Value.Yaml,
+					},
+				}
+				m.SpecificationExtension = append(m.SpecificationExtension, namAny)
 			}
 			if m.Name == "" {
 				m.Name = generateOperationName(method, name)
@@ -433,7 +454,10 @@ func (b *OpenAPI3Builder) buildFromSchema(name string, schema *openapiv3.Schema)
 			}
 		}
 	default:
-		// We go a scalar value
+		if schema.Nullable {
+			fInfo.fieldKind, fInfo.fieldType, fInfo.fieldFormat = FieldKind_REFERENCE, schema.Type, schema.Format
+			return fInfo
+		}
 		fInfo.fieldKind, fInfo.fieldType, fInfo.fieldFormat = FieldKind_SCALAR, schema.Type, schema.Format
 		return fInfo
 	}
